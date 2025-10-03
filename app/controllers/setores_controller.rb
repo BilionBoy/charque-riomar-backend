@@ -1,60 +1,43 @@
-class SetoresController < ApplicationController
-  before_action :set_setor, only: %i[ show edit update destroy ]
 
-  # GET /setores or /setores.json
+class SetoresController < ApplicationController
+  before_action :set_setor, only: %i[ show update destroy ]
+
+  # GET /setores
   def index
     @setores = Setor.all
+
+    render json: @setores
   end
 
-  # GET /setores/1 or /setores/1.json
+  # GET /setores/1
   def show
+    render json: @setor
   end
 
-  # GET /setores/new
-  def new
-    @setor = Setor.new
-  end
-
-  # GET /setores/1/edit
-  def edit
-  end
-
-  # POST /setores or /setores.json
+  # POST /setores
   def create
     @setor = Setor.new(setor_params)
 
-    respond_to do |format|
-      if @setor.save
-        format.html { redirect_to @setor, notice: "Setor was successfully created." }
-        format.json { render :show, status: :created, location: @setor }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @setor.errors, status: :unprocessable_entity }
-      end
+    if @setor.save
+      render json: @setor, status: :created, location: @setor
+    else
+      render json: @setor.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /setores/1 or /setores/1.json
+  # PATCH/PUT /setores/1
   def update
-    respond_to do |format|
-      if @setor.update(setor_params)
-        format.html { redirect_to @setor, notice: "Setor was successfully updated.", status: :see_other }
-        format.json { render :show, status: :ok, location: @setor }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @setor.errors, status: :unprocessable_entity }
-      end
+    if @setor.update(setor_params)
+      render json: @setor
+    else
+      render json: @setor.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /setores/1 or /setores/1.json
+  # DELETE /setores/1
   def destroy
     @setor.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to setores_path, notice: "Setor was successfully destroyed.", status: :see_other }
-      format.json { head :no_content }
-    end
+    render json: { message: "Setor deletado" }
   end
 
   private

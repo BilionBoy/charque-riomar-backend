@@ -1,69 +1,49 @@
-class CategoriasController < ApplicationController
-  before_action :set_categoria, only: %i[ show edit update destroy ]
 
-  # GET /categorias or /categorias.json
+class CategoriasController < ApplicationController
+  before_action :set_categoria, only: %i[ show update destroy ]
+
+  # GET /categorias
   def index
     @categorias = Categoria.all
+    render json: @categorias
   end
 
-  # GET /categorias/1 or /categorias/1.json
+  # GET /categorias/1
   def show
+    render json: @categoria
   end
 
-  # GET /categorias/new
-  def new
-    @categoria = Categoria.new
-  end
-
-  # GET /categorias/1/edit
-  def edit
-  end
-
-  # POST /categorias or /categorias.json
+  # POST /categorias
   def create
     @categoria = Categoria.new(categoria_params)
-
-    respond_to do |format|
-      if @categoria.save
-        format.html { redirect_to @categoria, notice: "Categoria was successfully created." }
-        format.json { render :show, status: :created, location: @categoria }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @categoria.errors, status: :unprocessable_entity }
-      end
+    if @categoria.save
+      render json: @categoria, status: :created, location: @categoria
+    else
+      render json: @categoria.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /categorias/1 or /categorias/1.json
+  # PATCH/PUT /categorias/1
   def update
-    respond_to do |format|
-      if @categoria.update(categoria_params)
-        format.html { redirect_to @categoria, notice: "Categoria was successfully updated.", status: :see_other }
-        format.json { render :show, status: :ok, location: @categoria }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @categoria.errors, status: :unprocessable_entity }
-      end
+    if @categoria.update(categoria_params)
+      render json: @categoria
+    else
+      render json: @categoria.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /categorias/1 or /categorias/1.json
+  # DELETE /categorias/1
   def destroy
     @categoria.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to categorias_path, notice: "Categoria was successfully destroyed.", status: :see_other }
-      format.json { head :no_content }
-    end
+    render json: { message: "Categoria deletada" }
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_categoria
       @categoria = Categoria.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
     def categoria_params
       params.require(:categoria).permit(:nome)
     end

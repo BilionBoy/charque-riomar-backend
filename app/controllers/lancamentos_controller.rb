@@ -1,70 +1,52 @@
+
 class LancamentosController < ApplicationController
-  before_action :set_lancamento, only: %i[ show edit update destroy ]
+  skip_before_action :authorize_request, raise: false if defined?(authorize_request)
+  before_action :set_lancamento, only: %i[ show update destroy ]
 
-  # GET /lancamentos or /lancamentos.json
+  # GET /lancamentos
   def index
-    @lancamentos = Lancamento.all
+    @lancamentos = Lancamento.includes(:setor,  :categoria).all
+    render json: @lancamentos.as_json(include: [:setor,  :categoria])
   end
 
-  # GET /lancamentos/1 or /lancamentos/1.json
+  # GET /lancamentos/1
   def show
+    render json: @lancamento.as_json(include: [:setor,  :categoria])
   end
 
-  # GET /lancamentos/new
-  def new
-    @lancamento = Lancamento.new
-  end
-
-  # GET /lancamentos/1/edit
-  def edit
-  end
-
-  # POST /lancamentos or /lancamentos.json
+  # POST /lancamentos
   def create
     @lancamento = Lancamento.new(lancamento_params)
 
-    respond_to do |format|
-      if @lancamento.save
-        format.html { redirect_to @lancamento, notice: "Lancamento was successfully created." }
-        format.json { render :show, status: :created, location: @lancamento }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @lancamento.errors, status: :unprocessable_entity }
-      end
+    if @lancamento.save
+      render json: @lancamento.as_json(include: [:setor,  :categoria]), status: :created
+    else
+      render json: @lancamento.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /lancamentos/1 or /lancamentos/1.json
+  # PATCH/PUT /lancamentos/1
   def update
-    respond_to do |format|
-      if @lancamento.update(lancamento_params)
-        format.html { redirect_to @lancamento, notice: "Lancamento was successfully updated.", status: :see_other }
-        format.json { render :show, status: :ok, location: @lancamento }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @lancamento.errors, status: :unprocessable_entity }
-      end
+    if @lancamento.update(lancamento_params)
+      render json: @lancamento.as_json(include: [:setor,  :categoria])
+    else
+      render json: @lancamento.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /lancamentos/1 or /lancamentos/1.json
+  # DELETE /lancamentos/1
   def destroy
     @lancamento.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to lancamentos_path, notice: "Lancamento was successfully destroyed.", status: :see_other }
-      format.json { head :no_content }
-    end
+    render json: { message: "Lancaçemtno deletado" }
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_lancamento
-      @lancamento = Lancamento.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def lancamento_params
-      params.require(:lancamento).permit(:setor_id, :categoria_id, :data, :valor)
-    end
+  def set_lancamento
+    @lancamento = Lancamento.find(params[:id])
+  end
+
+  def lancamento_params
+    params.require(:lancamento).permit(:setor_id, :categoria_id, :data, :valor)
+  end
 end
