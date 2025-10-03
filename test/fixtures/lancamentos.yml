@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  setor: one
+  categoria: one
+  data: 2025-10-03
+  valor: 9.99
+
+two:
+  setor: two
+  categoria: two
+  data: 2025-10-03
+  valor: 9.99
